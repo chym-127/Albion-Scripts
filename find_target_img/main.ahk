@@ -1,28 +1,29 @@
-; F2::
-;     {
-;         CoordMode "Pixel" ; Interprets the coordinates below as relative to the screen rather than the active window's client area.
-;         try
-;         {
-;             if ImageSearch(&FoundX, &FoundY, 0, 0, A_ScreenWidth, A_ScreenHeight, "image.png")
-;                 MsgBox "The icon was found at " FoundX "x" FoundY
-;             else
-;                 MsgBox "Icon could not be found on the screen."
-;         }
-;         catch as exc
-;             MsgBox "Could not conduct the search due to the following error:`n" exc.Message
-;     }
 collecting := False
 current := 0
 actions := Array()
+LoopFunc()
+{
+    For action in actions
+    {
+        Send(
+        Format("{{1} down}", action["KEY_CODE"])
+        )
+        Sleep(action["TIME"]*1)
+        Send(
+        Format("{{1} up}", action["KEY_CODE"])
+        )
+    }
+}
 F2::
     {
-        global collecting,current
+        global collecting,current,actions
         If (collecting)
         {
             Return
         } Else {
             collecting := True
         }
+        actions := Array()
         Loop
         {
 
@@ -35,11 +36,13 @@ F2::
             start_sec := A_TickCount
             If (ih.EndKey == GetKeyName("Space"))
             {
-                ToolTip
-                (
-                actions
-                )
+                FileDelete("actions.txt")
+                For action in actions
+                {
+                    FileAppend(Format("{1},{2}`n", action["KEY_CODE"],action["TIME"]), "actions.txt")
+                }
                 collecting := False
+                ToolTip()
                 Break
             }
             KeyWait ih.EndKey,"U"
@@ -48,7 +51,9 @@ F2::
             actions.Push(
             Map("KEY_CODE", ih.EndKey, "TIME", end_sec-start_sec)
             )
-
+            ToolTip(
+            "按下鼠标左键"
+            )
             KeyWait "LButton","D"
             start_sec := A_TickCount
             KeyWait "LButton","U"
@@ -63,8 +68,12 @@ F2::
 
 F3::
     {
-        global collecting
-        collecting := False
+        SetTimer(LoopFunc,200)
+    }
+
+F4::
+    {
+        SetTimer(LoopFunc,0)
     }
 
 F5::

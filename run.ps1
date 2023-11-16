@@ -1,8 +1,14 @@
-$filePath = "./main.exe"
+# Set-Location -Path $args[0]
+
+$filePath = [String]::Format("{0}main.exe", $args[0])
+
 if (Test-Path $filePath) {
     Remove-Item $filePath
 }
-Start-Process Ahk2Exe.exe '/in .\main.ahk /out .\main.exe' -NoNewWindow -Wait 
+
+$str = [String]::Format("/in {0}main.ahk /out {0}main.exe", $args[0])
+
+Start-Process Ahk2Exe.exe $str -NoNewWindow -Wait 
 if (Test-Path $filePath) {
-    Start-Process .\main.exe -NoNewWindow -Wait 
+    Start-Process $filePath -NoNewWindow -Wait 
 }

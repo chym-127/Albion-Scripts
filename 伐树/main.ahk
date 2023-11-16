@@ -31,8 +31,9 @@ LoopFunc()
     Sleep(Random(500, 1000))
 
     global start_sec
-    If (A_TickCount - start_sec >= 30 * 60 * 1000) {
+    If (A_TickCount - start_sec >= 1 * 60 * 1000) {
         If (CheckIsLogout()) {
+            Sleep(1 * 60 * 1000)
             LoginGame()
             start_sec := A_TickCount
         }
@@ -46,7 +47,7 @@ LoginGame() {
     If (is_loging) {
         ToolTip
         (
-            "正在登录..."
+        "正在登录..."
         )
         return
     }
@@ -62,7 +63,8 @@ LoginGame() {
     Click 10, 10
     Sleep(200)
     Click 685, 628
-    Sleep(4000)
+    Sleep(10000)
+    ToolTip()
     is_loging := false
 }
 
@@ -88,54 +90,53 @@ CheckIsLogout() {
 }
 
 F4::
-{
-    SetTimer LoopFunc, 0
-}
+    {
+        SetTimer LoopFunc, 0
+    }
 
 F2::
-{
-    Global targetX, targetY, targetX1, targetY1
-    if WinExist(albionTitle)
-        WinActivate ;
-    Sleep(200)
+    {
+        Global targetX, targetY, targetX1, targetY1
+        if WinExist(albionTitle)
+            WinActivate ;
+        Sleep(200)
 
-    ToolTip
-    (
+        ToolTip
+        (
         "请选择第一颗树"
-    )
-    KeyWait "LButton", "D"
-    MouseGetPos &targetX, &targetY
-    Sleep(200)
+        )
+        KeyWait "LButton", "D"
+        MouseGetPos &targetX, &targetY
+        Sleep(200)
 
-    ToolTip
-    (
+        ToolTip
+        (
         "请选择第二颗树"
-    )
-    KeyWait "LButton", "D"
-    MouseGetPos &targetX1, &targetY1
-    Sleep(200)
+        )
+        KeyWait "LButton", "D"
+        MouseGetPos &targetX1, &targetY1
+        Sleep(200)
 
-    ToolTip()
+        ToolTip()
 
-    global start_sec
-    start_sec := A_TickCount
-    SetTimer LoopFunc, 1000
-}
+        global start_sec
+        start_sec := A_TickCount
+        SetTimer LoopFunc, 1000
+    }
 
 F3::
-{
+    {
 
-    LoginGame()
-}
-
+        LoginGame()
+    }
 
 F5::
-{
-    MouseGetPos &x, &y
-    ToolTip
-    (
+    {
+        MouseGetPos &x, &y
+        ToolTip
+        (
         Format("{1},{2}", x, y)
-    )
-}
+        )
+    }
 
 ^ESC:: ExitApp

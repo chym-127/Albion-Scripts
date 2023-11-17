@@ -57,7 +57,7 @@ LoginGame() {
     is_loging := true
     WinGetPos &APP_X, &APP_Y, &APP_W, &APP_H, albionTitle
     Click 10, 10
-    Sleep(200)
+    Sleep(2000)
     Click 612, 545
     Sleep(4000)
     Click 10, 10

@@ -1,2 +1,4 @@
-Left,1531
-LButton,125
+Left,1563
+LButton,94
+Left,1375
+LButton,93

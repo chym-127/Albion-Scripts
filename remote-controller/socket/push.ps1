@@ -1,0 +1,1 @@
+scp -r ./chym-socket yun:/root

@@ -1,4 +1,4 @@
-/*
+﻿/*
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -24,29 +24,21 @@ SetWorkingDir %A_ScriptDir%
 audioMeter := VA_GetAudioMeter()
 
 greenBarColor = 0x437922
-; 483 421
-; 469 423
 redBarColor = 0xd3420d
 blueBarColor = 0x2a5790
-albionTitle = "Albion Online Client"
 
 mode = 1
 pulling = 1
 
 spot1X = 0
 spot1Y = 0
+spot2X = 0
+spot2Y = 0
+spot3X = 0
+spot3Y = 0
 
-X = 0
-Y = 0
-W = 0
-H = 0
+; Esc::ExitApp
 
-blueBarX = 0
-blueBarY = 0
-redBarX = 0
-redBarY = 0
-
-Esc::ExitApp
 
 F4::
     loopCount = 0
@@ -56,13 +48,13 @@ F4::
     currentSpotY = %spot1Y%
 
     Loop
-    { 
+    {   
         Random, rand, -20, 20
         thisX := currentSpotX + rand
         thisY := currentSpotY + rand
 
         Click %thisX%, %thisY%, down
-        Random, rand, 550, 1050
+        Random, rand, 550, 950
         Sleep %rand%
         Click up
 
@@ -70,7 +62,7 @@ F4::
 
         k = 0
         Loop
-        { 
+        {   
             k++
             if k > 300000
                 break
@@ -83,7 +75,7 @@ F4::
             }
         }
 
-        Click %thisX%, %thisY%, down
+        Click
 
         ;Sleep required for the correct behave of the exit loop checker, keep over 0.4s
         Sleep 300
@@ -99,14 +91,14 @@ F4::
             if !pulling
                 break
 
-            Click %thisX%, %thisY%,down
+            Click down
 
             Loop
             {
                 if !pulling
                     break
 
-                PixelSearch Px, Py, redBarX, redBarY, redBarX, redBarY, %redBarColor%, 50, RGB
+                PixelSearch Px, Py, 990, 554, 990, 554, %greenBarColor%, 50, RGB
                 if ErrorLevel
                     break
             }
@@ -117,18 +109,55 @@ F4::
 
         SetTimer, checkIfPulling, Delete
 
-        if loopCount = 12
+        ; if loopCount = 12
+        ; {
+        ;     useFishBait()
+        ;     loopCount = 0
+        ; }
+        ; else
+        ;     loopCount++
+
+        if mode = 3 
         {
-            ; useFishBait()
-            loopCount = 0
+            if (modeCount = 4)
+            {
+                currentSpotX = %spot2X%
+                currentSpotY = %spot2Y%
+            }
+            if (modeCount = 8)
+            {
+                currentSpotX = %spot3X%
+                currentSpotY = %spot3Y%
+            }
+            if (modeCount = 12)
+            {
+                currentSpotX = %spot1X%
+                currentSpotY = %spot1Y%
+                modeCount = 0
+            }
         }
-        else
-            loopCount++
+        else if mode = 2
+        {
+            if (modeCount = 4)
+            {
+                currentSpotX = %spot2X%
+                currentSpotY = %spot2Y%
+            }
+            if (modeCount = 8)
+            {
+                currentSpotX = %spot1X%
+                currentSpotY = %spot1Y%
+                modeCount = 0
+            }
+        }
+
+        modeCount++
 
         Random, rand, 4500, 6000
         Sleep %rand%
     }
 return
+
 
 useFishBait()
 {
@@ -147,55 +176,77 @@ useFishBait()
 
 }
 
-; 选择钓鱼点
+
 F3::
-    mode = 1
-    WinGetPos, X, Y, W, H,Albion Online Client
-    ; 527 421
-    blueBarX := Floor(840/1920*W)
-    blueBarY := Floor(588/1080*(H-40)+40)
-    redBarX := Floor(990/1920*W)
-    redBarY := Floor(554/1080*(H-40)+40)
+
+    mode = 3
+    ToolTip , Click on the first spot...
+    KeyWait, LButton, D
     MouseGetPos, spot1X, spot1Y
     Sleep 200
     Send {s}
-    ToolTip , press F4 to start fishing!
+    ToolTip , Click on the second spot...
+    KeyWait, LButton, D
+    MouseGetPos, spot2X, spot2Y
+    Sleep 200
+    Send {s}
+    ToolTip , Click on the third spot...
+    KeyWait, LButton, D
+    MouseGetPos, spot3X, spot3Y
+    Sleep 200
+    Send {s}
+    ToolTip , Spots selection completed, press F4 to start fishing!
     SetTimer, RemoveToolTip, -2500
-return
 
-
-F12::
-    WinGetPos, X, Y, W, H,Albion Online Client
-    ; 527 421
-    blueBarX := Floor(840/1920*W)
-    blueBarY := Floor(588/1080*H)
-    redBarX := Floor(990/1920*W)
-    redBarY := Floor(554/1080*H)
-    ToolTip , %blueBarX%x%blueBarY%`n%redBarX%x%redBarY%`n
-return
-
-F6::
-    WinGetPos, X, Y, W, H, Albion Online Client
-    ToolTip , %X%x%Y%`n%W%x%H%`n
-return
-
-F7::
-    MouseGetPos, MouseX, MouseY
-    PixelGetColor, color, %MouseX%, %MouseY%
-    ToolTip The color at the current cursor position %MouseX% %MouseY% is %color%
 return
 
 F2::
+
+    mode = 2
+    ToolTip , Click on the first spot...
+    KeyWait, LButton, D
+    MouseGetPos, spot1X, spot1Y
+    Sleep 200
+    Send {s}
+    ToolTip , Click on the second spot...
+    KeyWait, LButton, D
+    MouseGetPos, spot2X, spot2Y
+    Sleep 200
+    Send {s}
+    ToolTip , Spots selection completed, press F4 to start fishing!
+    SetTimer, RemoveToolTip, -2500
+
+return
+
+F1::
+
+    mode = 1
+    ToolTip , Click on the first spot...
+    KeyWait, LButton, D
+    MouseGetPos, spot1X, spot1Y
+    Sleep 200
+    Send {s}
+    ToolTip , Spots selection completed, press F4 to start fishing!
+    SetTimer, RemoveToolTip, -2500
+
+return
+
+
+RemoveToolTip:
+ToolTip
+return
+
+F7::
     Reload
 return
 
-RemoveToolTip:
-    ToolTip
+F12::
+    ExitApp
 return
 
-checkIfPulling:
 
-    PixelSearch Px, Py, blueBarX, blueBarY, blueBarX, blueBarY, %blueBarColor%, 30, RGB
+checkIfPulling:
+    PixelSearch Px, Py, 840, 588, 840, 588, %blueBarColor%, 30, RGB
     if ErrorLevel
         pulling = 0
 

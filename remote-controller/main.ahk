@@ -16,6 +16,7 @@ class Example extends WebSocket
 
     OnMessage(Event)
     {
+        CoordMode, Mouse,Screen
         str := Event.data
         StringSplit, arr, str, -
         switch arr1
@@ -26,6 +27,7 @@ class Example extends WebSocket
             Click, Up
         case "MouseMove":
             MouseMove, arr2, arr3
+			ToolTip, .
         }
         this.Close()
     }

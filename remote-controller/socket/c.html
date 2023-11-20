@@ -5,30 +5,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
 </head>
 
 <body>
-    <input id="input" type="text" />
+    <div id="controller" style="width: 1600px;height: 900px;background-color: #f0f0f0;">
+        <!-- <input id="input" type="text" />
     <button onclick="send()">Send</button>
-    <pre id="output"></pre>
+    <pre id="output"></pre> -->
+
+    </div>
     <script>
-        var input = document.getElementById("input");
-        var output = document.getElementById("output");
+        var controller = document.getElementById("controller");
         var socket = new WebSocket("ws://150.158.13.8:8080/ws");
+        var current = ''
         // var socket = new WebSocket("ws://127.0.0.1:8080/ws");
+        controller.addEventListener("mousemove", (event) => {
+            let xpos = event.clientX / 1600 * 1920
+            let ypos = event.clientY / 900 * 1080
+            current = `MouseMove-${xpos}-${ypos}`;
+        });
+
+        setInterval(() => {
+            if (current) {
+                send(current)
+            }
+            current = ''
+        }, 60);
+
+        controller.addEventListener("mousedown", (event) => {
+            current = `ClickDown`;
+        });
+
+        controller.addEventListener("mouseup", (event) => {
+            current = `ClickUp`;
+        });
 
 
         socket.onopen = function () {
-            output.innerHTML += "Status: Connected\n";
+            // output.innerHTML += "Status: Connected\n";
         };
 
         socket.onmessage = function (e) {
-            output.innerHTML += "Server: " + e.data + "\n";
+            console.log(e.data);
+            // output.innerHTML += "Server: " + e.data + "\n";
         };
 
-        function send() {
-            socket.send(input.value);
-            input.value = "";
+        function send(data) {
+            socket.send(data)
         }
     </script>
 </body>

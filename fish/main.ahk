@@ -162,7 +162,8 @@ F4::
             spot1Y := currentStep[3]
             spot2X := currentStep[4]
             spot2Y := currentStep[5]
-            Fishing()
+            if WinExist("Albion Online Client")
+                Fishing()
             Sleep 200
         }
 

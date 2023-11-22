@@ -1,89 +1,85 @@
 collecting := False
 current := 0
-actions := Array()
-LoopFunc()
-{
-    For action in actions
+start_sec := 0
+end_sec := 0
+actions := []
+; LoopFunc()
+; {
+;     For action in actions
+;     {
+;         Send(
+;         Format("{{1} down}", action["KEY_CODE"])
+;         )
+;         Sleep(action["TIME"]*1)
+;         Send(
+;         Format("{{1} up}", action["KEY_CODE"])
+;         )
+;     }
+; }
+F1::
+    global start_sec,end_sec,action
+    If collecting
     {
-        Send(
-        Format("{{1} down}", action["KEY_CODE"])
-        )
-        Sleep(action["TIME"]*1)
-        Send(
-        Format("{{1} up}", action["KEY_CODE"])
-        )
+        FileDelete, actions.txt
+        For action,val in actions
+        {
+            str := Format("{1}`n", val)
+            MsgBox, % str
+            FileAppend, % str, actions.txt
+        }
+        collecting := False
     }
-}
+    Else
+    {
+        ToolTip, Start Collect
+        collecting := True
+        start_sec := A_TickCount
+    }
+Return
+
 F2::
+    global start_sec,end_sec,actions
+    If !collecting
     {
-        global collecting,current,actions
-        If (collecting)
-        {
-            Return
-        } Else {
-            collecting := True
-        }
-        actions := Array()
-        Loop
-        {
-
-            ToolTip(
-            "按下方向键"
-            )
-            ih := InputHook("L1", "{Left}{Right}{Up}{Down}{Space}")
-            ih.Start()
-            ih.Wait()
-            start_sec := A_TickCount
-            If (ih.EndKey == GetKeyName("Space"))
-            {
-                FileDelete("actions.txt")
-                For action in actions
-                {
-                    FileAppend(Format("{1},{2}`n", action["KEY_CODE"],action["TIME"]), "actions.txt")
-                }
-                collecting := False
-                ToolTip()
-                Break
-            }
-            KeyWait ih.EndKey,"U"
-            end_sec := A_TickCount
-
-            actions.Push(
-            Map("KEY_CODE", ih.EndKey, "TIME", end_sec-start_sec)
-            )
-            ToolTip(
-            "按下鼠标左键"
-            )
-            KeyWait "LButton","D"
-            start_sec := A_TickCount
-            KeyWait "LButton","U"
-            end_sec := A_TickCount
-
-            actions.Push(
-            Map("KEY_CODE", "LButton", "TIME", end_sec-start_sec)
-            )
-        }
-
+        ToolTip, "Pree F1"
+        Return
     }
+    ToolTip, "Move Action"
+    MouseGetPos, xpos, ypos
+    end_sec := A_TickCount
+    sec := end_sec-start_sec
+    str := Format("{1}-{2}-{3}-{4}", "Click",sec,xpos,ypos)
+    actions.Push(str)
+    start_sec := A_TickCount
+Return
 
 F3::
+    global start_sec,end_sec,actions
+    If !collecting
     {
-        SetTimer(LoopFunc,200)
+        ToolTip, "Pree F1"
+        Return
     }
+    ToolTip, "Fishing Action"
+    Sleep, 200
+    mode = 2
+    ToolTip , Click on the first spot...
+    KeyWait, LButton, D
+    MouseGetPos, spot1X, spot1Y
+    Sleep 200
+    Send {s}
+    ToolTip , Click on the second spot...
+    KeyWait, LButton, D
+    MouseGetPos, spot2X, spot2Y
+    Sleep 200
+    Send {s}
+    SetTimer, RemoveToolTip, -2500
+    actions.Push(Format("{1}-{2}-{3}-{4}-{5}", "Fishing",spot1X,spot1Y,spot2X,spot2Y))
+Return
 
-F4::
-    {
-        SetTimer(LoopFunc,0)
-    }
-
-F5::
-    {
-        MouseGetPos &x, &y
-        ToolTip
-        (
-        Format("{1},{2}", x, y)
-        )
-    }
+RemoveToolTip:
+    ToolTip
+return
 
 Esc::
     {

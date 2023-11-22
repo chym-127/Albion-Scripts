@@ -173,7 +173,6 @@ useFishBait()
     Send {i}
     Sleep 200
     MouseMove %xpos%, %ypos%
-
 }
 
 F3::

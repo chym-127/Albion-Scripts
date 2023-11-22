@@ -155,16 +155,15 @@ F4::
             sec := currentStep[2]
             xpos := currentStep[3]
             ypos := currentStep[4]
-            ToolTip, Click,xpos,ypos
+            Click %xpos%,%ypos%
             Sleep sec
         }else{
             spot1X := currentStep[2]
             spot1Y := currentStep[3]
             spot2X := currentStep[4]
             spot2Y := currentStep[5]
-            ToolTip, Fishing
-            Sleep 1000
-            ; Fishing()
+            Fishing()
+            Sleep 200
         }
 
         currentStepIndex++
@@ -306,6 +305,5 @@ useFishBait()
 }
 
 F7::
-    {
-        ExitApp
-    }
+ExitApp
+Return

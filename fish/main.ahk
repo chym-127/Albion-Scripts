@@ -76,7 +76,7 @@ F1::
 Return
 
 F2::
-    global start_sec,end_sec,actions
+    global start_sec,end_sec,actions,moveCount
     If !collecting
     {
         ToolTip, "Pree F1"
@@ -89,6 +89,8 @@ F2::
     temp := ["Click",sec,xpos,ypos]
     actions.Push(temp)
     If (moveCount>1){
+        ; MsgBox, % moveCount
+        ; MsgBox, % actions[moveCount-1][1]
         If (actions[moveCount-1][1] = "Click")
         {
             s := actions[moveCount-1][2]
@@ -97,7 +99,7 @@ F2::
             actions[moveCount][2] := A_TickCount
         }
     }
-    moveCount := moveCount + 1
+    moveCount++
 Return
 
 F3::
@@ -120,7 +122,6 @@ F3::
     MouseGetPos, spot2X, spot2Y
     Sleep 200
     Send {s}
-    SetTimer, RemoveToolTip, -2500
     temp := ["Fishing",spot1X,spot1Y,spot2X,spot2Y]
     actions.Push(temp)
 
@@ -128,7 +129,7 @@ F3::
     {
         actions[moveCount-1][2] := 200
     }
-    moveCount = moveCount + 1
+    moveCount++
 Return
 
 F4::
@@ -152,15 +153,15 @@ F4::
         If (cmd = "Click")
         {
             sec := currentStep[2]
-            xpos = currentStep[3]
-            ypos = currentStep[4]
-            ToolTip, Click
+            xpos := currentStep[3]
+            ypos := currentStep[4]
+            ToolTip, Click,xpos,ypos
             Sleep sec
         }else{
-            spot1X= currentStep[2]
-            spot1Y= currentStep[3]
-            spot2X= currentStep[4]
-            spot2Y= currentStep[5]
+            spot1X := currentStep[2]
+            spot1Y := currentStep[3]
+            spot2X := currentStep[4]
+            spot2Y := currentStep[5]
             ToolTip, Fishing
             Sleep 1000
             ; Fishing()
@@ -304,7 +305,7 @@ useFishBait()
     MouseMove %xpos%, %ypos%
 }
 
-Esc::
+F7::
     {
         ExitApp
     }
